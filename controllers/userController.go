@@ -60,7 +60,7 @@ func (uc *UserController) CreateUser(c *gin.Context) {
   }
   c.JSON(200, gin.H{
     "message": "create success",
-		"user": newUser,
+		"data": newUser,
   })
 }
 
@@ -82,7 +82,7 @@ func (uc *UserController) LoginUser(c *gin.Context) {
 	token,err := uc.UserService.LoginUser(req, uc.DB,c);
   if err!= nil {
     c.JSON(400, gin.H{
-      "error": "something wrong",
+      "error": err.Error(),
     })
     return
   }

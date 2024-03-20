@@ -46,14 +46,14 @@ func (bc *BankController) PostBank(c *gin.Context) {
     c.JSON(400, gin.H{"error": err.Error()})
     return
   }
-	bank, err :=bc.BankService.AddBank(bank, bc.DB, c)
+	newBank, err :=bc.BankService.AddBank(bank, bc.DB, c)
   if err!= nil {
     c.JSON(400, gin.H{"error": err.Error()})
     return
   }
   c.JSON(200, gin.H{
 		"message": "Bank added",
-	  "bank": bank,
+	  "bank": newBank,
   })
 }
 
@@ -64,6 +64,14 @@ func (bc *BankController) PatchBank(c *gin.Context) {
 	id := uint(userID.(float64))
 	bank.OwnerID = id
 
+	bankID := c.Param("id")
+  bankIDUint, err := strconv.Atoi(bankID)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid Bank ID"})
+		return
+	}
+	bank.ID = uint(bankIDUint)
+
   if err := c.ShouldBindJSON(&bank); err!= nil {
     c.JSON(400, gin.H{"error": err.Error()})
     return
@@ -72,12 +80,15 @@ func (bc *BankController) PatchBank(c *gin.Context) {
     c.JSON(400, gin.H{"error": err.Error()})
     return
   }
-	bank, err :=bc.BankService.UpdateBank(bank, bc.DB, c)
+	newBank, err :=bc.BankService.UpdateBank(bank, bc.DB, c)
   if err!= nil {
     c.JSON(400, gin.H{"error": err.Error()})
     return
   }
-  c.JSON(200, gin.H{"message": "Bank updated"})
+  c.JSON(200, gin.H{
+		"message": "Bank updated",
+	  "bank": newBank,
+  })
 }
 
 func (bc *BankController) DeleteBank(c *gin.Context) {

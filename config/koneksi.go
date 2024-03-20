@@ -32,7 +32,11 @@ func ConnectDatabase() (*gorm.DB, error) {
 	fmt.Println("Database created")
 
 	if err := db.AutoMigrate(
-		&models.User{}) ; err != nil {
+		&models.User{},
+		&models.Bank{},
+		&models.Product{},
+		&models.Order{},
+		) ; err != nil {
 		return nil, err
 	}
 	return db, nil

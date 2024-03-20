@@ -9,5 +9,5 @@ type Product struct {
 	OwnerID  uint   `json:"owner_id" validate:"required"`
 	Owner    User   `gorm:"foreignkey:OwnerID"`
 	ImageUrl string `json:"imageUrl" validate:"required"`
-	Order    []Order `gorm:"foreignkey:Order"`
+	Order    []Order `gorm:"foreignkey:product_id"`
 }

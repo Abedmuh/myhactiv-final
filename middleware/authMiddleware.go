@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -18,30 +17,29 @@ func Authentication() gin.HandlerFunc {
 		}
 
 		// Periksa apakah token memiliki prefix "Bearer "
-		if !strings.HasPrefix(tokenString, "Bearer ") {
-				c.AbortWithStatusJSON(401, gin.H{"error": "Invalid token format"})
-				return
-		}
+		// if !strings.HasPrefix(tokenString, "Bearer ") {
+		// 	c.AbortWithStatusJSON(401, gin.H{"error": "Invalid token format"})
+		// 	return
+		// }
 
-		// Ambil token setelah prefix "Bearer "
-		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-
+		// tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+		
 		secretKey := viper.GetString("JWT_SECRET_KEY")
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-						return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-				}
-				return []byte(secretKey), nil
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return []byte(secretKey), nil
 		})
+
 		if err != nil {
-				fmt.Println(err)
-				c.AbortWithStatusJSON(401, gin.H{"error": "Unauthenticated"})
-				return
+			c.AbortWithStatusJSON(401, gin.H{"error": err.Error()})
+			return
 		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-				// Ambil nilai userid dari token claims
-				userid, ok := claims["userid"].(string)
+			fmt.Println("auth token claims")
+			userid, ok := claims["userid"]
 				if !ok {
 						c.AbortWithStatusJSON(401, gin.H{"error": "Invalid token claims"})
 						return

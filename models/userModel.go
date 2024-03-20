@@ -6,12 +6,14 @@ import (
 
 type User struct {
 	gorm.Model
-	Username 	 string `gorm:"type:varchar(100);uniqueIndex;not null" json:"username" validate:"required"`
-	Email      string `gorm:"type:varchar(100);uniqueIndex;not null" json:"email" validate:"required,email"`
-	Name 		   string `gorm:"type:varchar(100);not null" json:"name" validate:"required"` 
-	Role 		   string `gorm:"type:varchar(100);not null" json:"role" validate:"required"` 
-	Password   string `gorm:"type:varchar(100);not null" json:"password" validate:"required,min=6"`
-	Banks      []Bank `gorm:"foreignKey:OwnerID"`
+	Username 	 string `gorm:"type:varchar(100);uniqueIndex;not null" json:"username" `
+	Email      string `gorm:"type:varchar(100);uniqueIndex;not null" json:"email" `
+	Name 		   string `gorm:"type:varchar(100);not null" json:"name" ` 
+	Role 		   string `gorm:"type:varchar(100);not null" json:"role"` 
+	Password   string `gorm:"type:varchar(100);not null" json:"password"`
+	Banks      []Bank `gorm:"foreignKey:owner_id"`
+	Products 	 []Product `gorm:"foreignKey:owner_id"`
+	Orders     []Order `gorm:"foreignKey:user_id"`
 }
 
 //req

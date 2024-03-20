@@ -8,8 +8,8 @@ import (
 )
 
 type BankSvcInter interface {
-	AddBank(Bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error)
-	UpdateBank(Bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error)
+	AddBank(bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error)
+	UpdateBank(bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error)
 	DeleteBank(ID uint, tx *gorm.DB, c *gin.Context) error
 
 	AuthoBank(id string, tx *gorm.DB, c *gin.Context) error
@@ -22,18 +22,29 @@ func NewBankService() BankSvcInter {
 	return &BankService{}
 }
 
-func (bs *BankService) AddBank(Bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error) {
-  // tx.Create(&Bank)
-  return models.Bank{}, nil
+func (bs *BankService) AddBank(bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error) {
+	result := tx.Create(&bank)
+	if result.Error != nil {
+		return models.Bank{}, result.Error
+	}
+  return bank, nil
 }
 
-func (bs *BankService) UpdateBank(Bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error) {
-  // tx.Save(&Bank)
-  return Bank, nil
+func (bs *BankService) UpdateBank(bank models.Bank, tx *gorm.DB, c *gin.Context) (models.Bank, error) {
+  result := tx.Save(&bank)
+	if result.Error!= nil {
+    return models.Bank{}, result.Error
+  }
+  return bank, nil
 }
 
 func (bs *BankService) DeleteBank(ID uint, tx *gorm.DB, c *gin.Context) error {
-  // tx.Delete(&ID)
+	var bank models.Bank
+  result :=tx.Unscoped().Delete(&bank, ID)
+
+	if result.Error != nil {
+		return result.Error
+	}
   return nil
 }
 

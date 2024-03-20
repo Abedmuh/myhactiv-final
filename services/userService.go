@@ -70,7 +70,7 @@ func (us *UserService) LoginUser(user models.UserLogin, db *gorm.DB, c *gin.Cont
 
 	if err := db.Where("username = ?", user.Username).First(&dbUser).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
-				return models.ResUserLog{}, errors.New("pengguna tidak ditemukan")
+			return models.ResUserLog{}, errors.New("pengguna tidak ditemukan")
 		}
 		return models.ResUserLog{}, err
 	}
@@ -79,7 +79,7 @@ func (us *UserService) LoginUser(user models.UserLogin, db *gorm.DB, c *gin.Cont
 		return models.ResUserLog{}, errors.New("password salah")
 	}
 
-	signedToken,err:= generateToken(dbUser.Username)
+	signedToken,err:= generateToken(dbUser.ID)
 	if err!= nil {
     return models.ResUserLog{}, err
   }
@@ -94,12 +94,12 @@ func (us *UserService) LoginUser(user models.UserLogin, db *gorm.DB, c *gin.Cont
 	return userLogin, nil
 }
 
-func generateToken(username string)  (string,error){
+func generateToken(id uint)  (string,error){
 	secretKey := viper.GetString("JWT_SECRET_KEY")
 	timeExp := viper.GetDuration("JWT_TIME_EXP")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"userid": username,
+		"userid": id,
     "exp": time.Now().Add(time.Duration(timeExp) * time.Hour).Unix(), // Token akan kedaluwarsa dalam 12 jam
 	})
 
